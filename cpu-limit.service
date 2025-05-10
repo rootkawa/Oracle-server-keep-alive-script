@@ -5,9 +5,8 @@ Description=Keep CPU usage
 User=root
 ExecStart=/bin/bash /usr/local/bin/cpu-limit.sh
 ExecStop=/bin/bash -c 'kill $(cat /tmp/cpu-limit.pid) && rm -rf /tmp/cpu-limit.pid'
-Restart=always
-RestartSec=60s
-RestartKillSignal=SIGKILL
+Type=oneshot
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target

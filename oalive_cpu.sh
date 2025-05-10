@@ -28,15 +28,36 @@ fi
 # Configure CPU limit in service file
 sed -i "${line_number}a CPUQuota=${cpu_limit}%" /etc/systemd/system/cpu-limit.service
 
-# Enable and start the service
+# Create timer file
+cat > /etc/systemd/system/cpu-limit.timer << EOF
+[Unit]
+Description=Run CPU limit every 45 minutes for 10 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=45min
+RuntimeSec=10min
+Unit=cpu-limit.service
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable and start the timer
 systemctl daemon-reload
-systemctl enable cpu-limit.service
-if systemctl start cpu-limit.service; then
+systemctl enable cpu-limit.timer
+if systemctl start cpu-limit.timer; then
   _green "CPU限制安装成功 脚本路径: /usr/local/bin/cpu-limit.sh"
 else
-  restorecon /etc/systemd/system/cpu-limit.service
-  systemctl enable cpu-limit.service
-  systemctl start cpu-limit.service
+  restorecon /etc/systemd/system/cpu-limit.timer
+  systemctl enable cpu-limit.timer
+  systemctl start cpu-limit.timer
   _green "CPU限制安装成功 脚本路径: /usr/local/bin/cpu-limit.sh"
 fi
 _green "The CPU limit script has been installed at /usr/local/bin/cpu-limit.sh"
+
+# Show status of timer and service
+echo -e "\nTimer Status:"
+systemctl status cpu-limit.timer
+echo -e "\nService Status:"
+systemctl status cpu-limit.service
