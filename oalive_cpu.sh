@@ -2,13 +2,17 @@
 _green() { echo -e "\033[32m\033[01m$@\033[0m"; }
 
 # Download and set up CPU limiter script
-curl -L https://gitlab.com/spiritysdx/Oracle-server-keep-alive-script/-/raw/main/cpu-limit.sh -o cpu-limit.sh && chmod +x cpu-limit.sh
+curl -L https://raw.githubusercontent.com/rootkawa/Oracle-server-keep-alive-script/refs/heads/main/cpu-limit.sh -o cpu-limit.sh && chmod +x cpu-limit.sh
 mv cpu-limit.sh /usr/local/bin/cpu-limit.sh
 chmod +x /usr/local/bin/cpu-limit.sh
 
 # Download and set up CPU limiter service
-curl -L https://gitlab.com/spiritysdx/Oracle-server-keep-alive-script/-/raw/main/cpu-limit.service -o cpu-limit.service && chmod +x cpu-limit.service
+curl -L https://raw.githubusercontent.com/rootkawa/Oracle-server-keep-alive-script/refs/heads/main/cpu-limit.service -o cpu-limit.service && chmod +x cpu-limit.service
 mv cpu-limit.service /etc/systemd/system/cpu-limit.service
+
+# Download and set up CPU limiter timer
+curl -L https://raw.githubusercontent.com/rootkawa/Oracle-server-keep-alive-script/refs/heads/main/cpu-limit.timer -o cpu-limit.timer && chmod +x cpu-limit.timer
+mv cpu-limit.timer /etc/systemd/system/cpu-limit.timer
 
 # Calculate CPU limit based on core count
 line_number=7
@@ -27,21 +31,6 @@ fi
 
 # Configure CPU limit in service file
 sed -i "${line_number}a CPUQuota=${cpu_limit}%" /etc/systemd/system/cpu-limit.service
-
-# Create timer file
-cat > /etc/systemd/system/cpu-limit.timer << EOF
-[Unit]
-Description=Run CPU limit every 45 minutes for 10 minutes
-
-[Timer]
-OnBootSec=1min
-OnUnitActiveSec=50min
-RuntimeSec=10min
-Unit=cpu-limit.service
-
-[Install]
-WantedBy=multi-user.target
-EOF
 
 # Enable and start the timer
 systemctl daemon-reload
