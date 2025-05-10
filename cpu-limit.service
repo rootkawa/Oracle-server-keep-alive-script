@@ -5,4 +5,5 @@ Description=Keep CPU usage in check
 User=root
 ExecStart=/bin/bash /usr/local/bin/cpu-limit.sh
 ExecStop=/bin/bash -c 'kill $(cat /tmp/cpu-limit.pid) && rm -f /tmp/cpu-limit.pid'
+RuntimeMaxSec=10min
 Type=simple
