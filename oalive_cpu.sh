@@ -35,7 +35,7 @@ Description=Run CPU limit every 45 minutes for 10 minutes
 
 [Timer]
 OnBootSec=1min
-OnUnitActiveSec=45min
+OnUnitActiveSec=50min
 RuntimeSec=10min
 Unit=cpu-limit.service
 
