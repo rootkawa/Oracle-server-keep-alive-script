@@ -1,3 +1,6 @@
+#!/bin/bash
+_green() { echo -e "\033[32m\033[01m$@\033[0m"; }
+
 # Download and set up CPU limiter script
 curl -L https://gitlab.com/spiritysdx/Oracle-server-keep-alive-script/-/raw/main/cpu-limit.sh -o cpu-limit.sh && chmod +x cpu-limit.sh
 mv cpu-limit.sh /usr/local/bin/cpu-limit.sh
